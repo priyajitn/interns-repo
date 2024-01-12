@@ -6,7 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>DATABASE ETRY</h1>
+    <h1>DATABASE ENTRY</h1>
+
+    <% if (typeof errorMessage !== 'undefined') { %>
+        <p style="color: red;"><%= errorMessage %></p>
+    <% } %>
+    
     <form action="/entry" method="post">
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name" required>
@@ -16,5 +21,7 @@
         <br>
         <button type="submit">SAVE</button>
       </form>
+      <br>
+      <a href="/data">show all users</a>
 </body>
 </html>
