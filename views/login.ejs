@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="index.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <form action="/login" method="post">
+    <div id="error"><%= error %></div>
+    <input type="text" name="email" class="email" placeholder="E-Mail" value="<%=email ? email:'' %>">
+    <input type="password" name="password" class="password" placeholder="Password" value="<%=password ? password:'' %>">
+    <button type="submit">Login</button>
+    </form>
+    <form action="/forget" method="get">
+        <button type="submit">forget password</button>
+    </form>
+</body>
+</html>
