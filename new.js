@@ -5,6 +5,7 @@ app.set('view engine','ejs');
 //const db= require('./connection');
 
 const mongoose = require('mongoose');
+const {authSchema} = require('./validation_scema')
 
 //const user = require('./userModel');
 const userModel = require('./userModel');
@@ -16,14 +17,33 @@ app.use(express.json());
 const user = mongoose.connect("mongodb+srv://aspruhasahoo:KLwGyJqpePbdBZtR@test1.mxwggm8.mongodb.net/?retryWrites=true&w=majority");
 
 app.get('/entry', (req, res) => {
-    res.render('dataentry');
+    res.render('dataentry',{ errorMessage: undefined });
   })
 app.post('/entry',async(req,res)=>{
-    const {name,email} = req.body;
-    try{
-        const newuser = await userModel.create({name,email})
-        res.json(newuser)
-    }catch(error){
+    try {
+        const value = await authSchema.validateAsync(req.body);
+        console.log(value);
+
+        const { name, email } = value;
+
+        // Check if email already exists
+        const existingUser = await userModel.findOne({ email });
+        if (existingUser) {
+            return res.render('dataentry', { errorMessage: 'Email already exists.' });
+        }
+
+        // if (name === "" || email=== "") {
+        //     return res.render('dataentry', { errorMessage: 'please fill the required fields' });
+        // }
+
+        const newuser = await userModel.create({ name, email });
+
+        //res.json(newuser);
+        return res.render('dataentry', { errorMessage: 'Succesfully saved to database' });
+    } catch (error) {
+        if (error.isJoi === true) {
+            return res.render('dataentry', { errorMessage: 'Invalid credentials.' });
+        }
         res.status(500).send(error);
     }
 });
@@ -31,7 +51,8 @@ app.post('/entry',async(req,res)=>{
 app.get('/data',async(req,res)=>{
     try{
         const data = await userModel.find();
-        res.json(data);
+        res.render('allUsers', { users: data });
+        //res.json(data);
     }catch(error){
         res.status(500).send(error);
     }
@@ -47,7 +68,7 @@ app.get('/:id',async(req,res)=>{
     }
 })
 
-app.put('/update/:id',async(req,res)=>{
+app.put('/:id',async(req,res)=>{
     const {id} = req.params.id;
     const {name,email} = req.body;
     try{
