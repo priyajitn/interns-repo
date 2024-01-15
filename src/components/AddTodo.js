@@ -1,10 +1,25 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { useDispatch } from 'react-redux'
-import { addTodo } from '../features/todo/todoSlice'
+import { addTodo,setTodo } from '../features/todo/todoSlice'
+import getApiData from '../features/todo/getApiData'
+
 function AddTodo() {
     const [input,setInput] = useState("");
     const  dispatch = useDispatch()
+    useEffect(()=>{
+      const fetData=async()=>{
+        try{
 
+          const data = await getApiData();
+          dispatch(setTodo(data));
+          console.log({data});
+        }
+        catch(e){
+          console.error('error fetching')
+        }
+      }
+      fetData();
+    },[dispatch])
   const addTodohandler = (event) => {
     event.preventDefault();
     dispatch(addTodo(input));
